@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -582,13 +583,177 @@
     const baseMaths = [
         { name: "Functions", w: 3 }, { name: "Quadratic Equations", w: 2 }, { name: "Complex Numbers", w: 2 }, { name: "Conic Sections", w: 3 }
     ];
-
-    let baseExamData = [
-        { id: "def-0", name: "Prep Test 1", dateStr: "2026-07-05", timeStr: "09:00:00", displayDate: "July 5, 2026", type: "JEE Main", syllabus: { physics: [...basePhysics], chemistry: [...baseChemistry], maths: [...baseMaths] } },
-        { id: "def-1", name: "Prep Test 2", dateStr: "2026-08-02", timeStr: "09:00:00", displayDate: "August 2, 2026", type: "JEE Main", syllabus: { physics: [...basePhysics], chemistry: [...baseChemistry], maths: [...baseMaths] } },
-        { id: "def-2", name: "Prep Test 3", dateStr: "2026-08-30", timeStr: "09:00:00", displayDate: "August 30, 2026", type: "JEE Main", syllabus: { physics: [...basePhysics], chemistry: [...baseChemistry], maths: [...baseMaths] } },
-        { id: "def-3", name: "Prep Test 4", dateStr: "2026-10-04", timeStr: "09:00:00", displayDate: "October 4, 2026", type: "JEE Main", syllabus: { physics: [...basePhysics], chemistry: [...baseChemistry], maths: [...baseMaths] } }
-    ];
+let baseExamData = [
+{
+    id: "def-0",
+    name: "Preparatory Test 1",
+    dateStr: "2026-07-05",
+    timeStr: "09:00:00",
+    displayDate: "July 5, 2026",
+    type: "JEE Main",
+    syllabus: {
+        physics: [
+            {name:"Kinematics",w:2},
+            {name:"Laws of Motion",w:2},
+            {name:"Work, Energy & Power",w:2},
+            {name:"Conservation of Momentum",w:2},
+            {name:"Rotational Motion",w:3},
+            {name:"Gravitation",w:2},
+            {name:"Properties of Solids & Fluids",w:2},
+            {name:"Heat",w:2},
+            {name:"Thermodynamics",w:3},
+            {name:"Kinetic Theory of Gases",w:2},
+            {name:"Oscillations",w:2},
+            {name:"Waves",w:2},
+            {name:"Electrostatics",w:3}
+        ],
+        chemistry:[
+            {name:"Basic Concepts of Chemistry",w:2},
+            {name:"Redox Reactions",w:2},
+            {name:"Atomic Structure",w:2},
+            {name:"Chemical Bonding",w:3},
+            {name:"Equilibrium",w:3},
+            {name:"Chemical Kinetics",w:2},
+            {name:"Classification & Periodicity",w:2},
+            {name:"Purification & Characterisation of Organic Compounds",w:2},
+            {name:"Basic Principles of Organic Chemistry",w:3},
+            {name:"Hydrocarbons",w:3},
+            {name:"Haloalkanes & Haloarenes",w:2},
+            {name:"Alcohols, Phenols & Ethers",w:3}
+        ],
+        maths:[
+            {name:"Sets",w:1},
+            {name:"Relations",w:1},
+            {name:"Functions",w:3},
+            {name:"Quadratic Equations",w:2},
+            {name:"Complex Numbers",w:2},
+            {name:"Permutations & Combinations",w:2},
+            {name:"Binomial Theorem",w:2},
+            {name:"Sequences & Series",w:2},
+            {name:"Statistics",w:2},
+            {name:"Straight Lines",w:2},
+            {name:"Circles",w:2},
+            {name:"Conic Sections",w:3},
+            {name:"Trigonometric Ratios & Identities",w:3},
+            {name:"Inverse Trigonometric Functions",w:2}
+        ]
+    }
+},
+{
+    id:"def-1",
+    name:"Preparatory Test 2",
+    dateStr:"2026-08-02",
+    timeStr:"09:00:00",
+    displayDate:"August 2, 2026",
+    type:"JEE Main",
+    syllabus:{
+        physics:[
+            {name:"Preparatory Test 1 Complete Syllabus",w:3},
+            {name:"Current Electricity",w:3}
+        ],
+        chemistry:[
+            {name:"Preparatory Test 1 Complete Syllabus",w:3},
+            {name:"Aldehydes & Ketones",w:3},
+            {name:"Carboxylic Acids",w:3},
+            {name:"Organic Compounds Containing Nitrogen",w:3},
+            {name:"Biomolecules",w:2}
+        ],
+        maths:[
+            {name:"Preparatory Test 1 Complete Syllabus",w:3},
+            {name:"Limits",w:3},
+            {name:"Continuity",w:2},
+            {name:"Differentiability",w:2},
+            {name:"Differentiation",w:3},
+            {name:"Applications of Derivatives",w:3}
+        ]
+    }
+},
+{
+    id:"def-2",
+    name:"Preparatory Test 3",
+    dateStr:"2026-08-30",
+    timeStr:"09:00:00",
+    displayDate:"August 30, 2026",
+    type:"JEE Main",
+    syllabus:{
+        physics:[
+            {name:"Preparatory Test 2 Complete Syllabus",w:3},
+            {name:"Magnetic Effects of Current",w:3},
+            {name:"Magnetism",w:3},
+            {name:"Electromagnetic Induction",w:3},
+            {name:"Alternating Current",w:2}
+        ],
+        chemistry:[
+            {name:"Preparatory Test 2 Complete Syllabus",w:3},
+            {name:"Solutions",w:3},
+            {name:"Electrochemistry",w:3},
+            {name:"p-Block Elements",w:3}
+        ],
+        maths:[
+            {name:"Preparatory Test 2 Complete Syllabus",w:3},
+            {name:"Indefinite Integrals",w:3},
+            {name:"Definite Integrals",w:3},
+            {name:"Area Under Curves",w:2}
+        ]
+    }
+},
+{
+    id:"def-3",
+    name:"Preparatory Test 4",
+    dateStr:"2026-10-04",
+    timeStr:"09:00:00",
+    displayDate:"October 4, 2026",
+    type:"JEE Main",
+    syllabus:{
+        physics:[
+            {name:"Preparatory Test 3 Complete Syllabus",w:3},
+            {name:"Electromagnetic Waves",w:2},
+            {name:"Ray Optics",w:3}
+        ],
+        chemistry:[
+            {name:"Preparatory Test 3 Complete Syllabus",w:3},
+            {name:"d & f Block Elements",w:3},
+            {name:"Coordination Compounds",w:3}
+        ],
+        maths:[
+            {name:"Preparatory Test 3 Complete Syllabus",w:3},
+            {name:"Differential Equations",w:3},
+            {name:"Probability",w:3},
+            {name:"Matrices",w:3},
+            {name:"Determinants",w:3}
+        ]
+    }
+},
+{
+    id:"def-4",
+    name:"Preparatory Test 5",
+    dateStr:"2026-11-01",
+    timeStr:"09:00:00",
+    displayDate:"November 1, 2026",
+    type:"JEE Main",
+    syllabus:{
+        physics:[
+            {name:"Preparatory Test 4 Complete Syllabus",w:3},
+            {name:"Wave Optics",w:3},
+            {name:"Dual Nature of Matter & Radiation",w:3},
+            {name:"Atoms",w:2},
+            {name:"Nuclei",w:2},
+            {name:"Electronic Devices",w:3},
+            {name:"Units & Measurements",w:2},
+            {name:"Experimental Skills",w:2}
+        ],
+        chemistry:[
+            {name:"Preparatory Test 4 Complete Syllabus",w:3},
+            {name:"Principles Related to Practical Chemistry",w:2}
+        ],
+        maths:[
+            {name:"Preparatory Test 4 Complete Syllabus",w:3},
+            {name:"Vector Algebra",w:3},
+            {name:"3D Geometry",w:3}
+        ]
+    }
+}
+];
 
     let globalExams = [];
     let currentCountdownInterval = null;
