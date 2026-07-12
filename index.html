@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MGE-AITS Dashboard</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --panel-bg: #1e293b;
+            --accent-blue: #38bdf8;
+            --accent-green: #4ade80;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        header h1 {
+            color: var(--accent-blue);
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-size: 1.1rem;
+        }
+
+        /* Countdown Widget */
+        .countdown-section {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 2px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.15);
+        }
+
+        .countdown-section h2 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .countdown-section .exam-name {
+            color: var(--accent-green);
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .timer-display {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .timer-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 90px;
+            border: 1px solid var(--border-color);
+        }
+
+        .timer-box .num {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-blue);
+            display: block;
+        }
+
+        .timer-box .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Layout Split for portions and list */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1.2fr 0.8fr;
+            }
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .panel h3 {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            color: var(--accent-blue);
+        }
+
+        /* Test Cards */
+        .test-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 550px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .test-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .test-card:hover, .test-card.active {
+            border-color: var(--accent-blue);
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .test-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .test-card .card-date {
+            font-size: 0.9rem;
+            color: var(--accent-green);
+        }
+
+        .test-card .card-type {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* Syllabus View */
+        .syllabus-view h4 {
+            color: var(--accent-green);
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+
+        .syllabus-text {
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #e2e8f0;
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        /* Custom Scrollbar for list */
+        .test-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .test-list::-webkit-scrollbar-thumb {
+            background-color: var(--border-color);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>MAHARISHI GLOBAL EDUCATION</h1>
+        <p>All India Test Series (MGE-AITS) for JEE 2027 Dashboard</p>
+    </header>
+
+    <!-- LIVE COUNTDOWN WIDGET -->
+    <div class="countdown-section">
+        <h2>COUNTDOWN TO NEXT UPCOMING EXAM</h2>
+        <div id="next-exam-title" class="exam-name">Loading Next Exam Details...</div>
+        <div id="next-exam-date" style="color: var(--text-muted); font-size: 0.95rem;"></div>
+        <div class="timer-display">
+            <div class="timer-box"><span class="num" id="days">00</span><span class="label">Days</span></div>
+            <div class="timer-box"><span class="num" id="hours">00</span><span class="label">Hours</span></div>
+            <div class="timer-box"><span class="num" id="minutes">00</span><span class="label">Mins</span></div>
+            <div class="timer-box"><span class="num" id="seconds">00</span><span class="label">Secs</span></div>
+        </div>
+    </div>
+
+    <!-- MAIN TRACKING CONSOLE -->
+    <div class="main-layout">
+        
+        <!-- RIGHT PANEL FLIPPED TO LEFT FOR PORTION VIEWING -->
+        <div class="panel">
+            <h3>Syllabus / Portions Window</h3>
+            <div id="syllabus-container">
+                <p style="color: var(--text-muted);">Select any test card on the side panel to dynamically review its comprehensive syllabus portions here.</p>
+            </div>
+        </div>
+
+        <!-- LIST PANEL -->
+        <div class="panel">
+            <h3>Test Series Roadmap</h3>
+            <div class="test-list" id="test-list-container">
+                <!-- Cards injected programmatically from schedule database -->
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Embedded Database constructed accurately from schedule documentation
+    const examData = [
+        {
+            name: "Preparatory Test 2",
+            dateStr: "2026-08-02",
+            timeStr: "09:00:00",
+            displayDate: "August 2, 2026 (Sunday)",
+            type: "JEE Main & Advanced",
+            syllabus: {
+                physics: "Preparatory Test 1 syllabus (approx 70% weightage). Current Electricity.",
+                chemistry: "Preparatory Test 1 syllabus (approx 70% weightage). Aldehydes and Ketones. Carboxylic Acids. Organic Compounds Containing Nitrogen. Biomolecules. Polymers.",
+                maths: "Preparatory Test 1 syllabus (approx 70% weightage). Limits, Continuity and Differentiability. Differentiation. Applications of Derivatives."
+            }
+        },
+        {
+            name: "Preparatory Test 3",
+            dateStr: "2026-08-30",
+            timeStr: "09:00:00",
+            displayDate: "August 30, 2026 (Sunday)",
+            type: "JEE Main & Advanced",
+            syllabus: {
+                physics: "Preparatory Test 2 syllabus (approx 75% weightage). Magnetic Effects of Current and Magnetism. Electromagnetic Induction and Alternating Current.",
+                chemistry: "Preparatory Test 2 syllabus (approx 75% weightage). Solutions. Electrochemistry. p-Block Elements.",
+                maths: "Preparatory Test 2 syllabus (approx 75% weightage). Indefinite Integrals. Definite Integrals. Areas."
+            }
+        },
+        {
+            name: "Preparatory Test 4",
+            dateStr: "2026-10-04",
+            timeStr: "09:00:00",
+            displayDate: "October 4, 2026 (Sunday)",
+            type: "JEE Main & Advanced",
+            syllabus: {
+                physics: "Preparatory Test 3 syllabus (approx 80% weightage). Electromagnetic Waves. Ray Optics.",
+                chemistry: "Preparatory Test 3 syllabus (approx 80% weightage). Isolation of Metals. d- and f-Block Elements. Coordination Compounds.",
+                maths: "Preparatory Test 3 syllabus (approx 80% weightage). Differential Equations. Probability. Matrices and Determinants."
+            }
+        },
+        {
+            name: "Preparatory Test 5",
+            dateStr: "2026-11-01",
+            timeStr: "09:00:00",
+            displayDate: "November 1, 2026 (Sunday)",
+            type: "JEE Main & Advanced",
+            syllabus: {
+                physics: "Preparatory Test 4 syllabus (approx 85% weightage). Wave Optics. Dual Nature of Matter/Radiation. Atoms & Nuclei. Electronic Devices. Units & Measurements. Experimental Skills.",
+                chemistry: "Preparatory Test 4 syllabus (approx 85% weightage). Solid State. Surface Chemistry. Principles of Qualitative Analysis. Chemistry in Everyday Life. Environmental Chemistry. Principles Related to Practical Chemistry.",
+                maths: "Preparatory Test 4 syllabus (approx 85% weightage). Vector Algebra. Three-Dimensional Geometry."
+            }
+        },
+        {
+            name: "Part Test 1",
+            dateStr: "2026-11-14",
+            timeStr: "09:00:00",
+            displayDate: "November 14, 2026 (Saturday)",
+            type: "JEE Main & Advanced P1/P2",
+            syllabus: {
+                physics: "Kinematics. Laws of Motion. Work, Energy and Power. Conservation of Momentum. Rotational Motion.",
+                chemistry: "Some Basic Concepts. Redox Reactions. Atomic Structure. Chemical Bonding & Molecular Structure. Equilibrium. Chemical Kinetics. Classification of Elements & Periodicity. Hydrogen. s-Block Elements.",
+                maths: "Sets and Relations. Functions. Limits Continuity and Differentiability. Differentiation. Applications of Derivatives. Indefinite & Definite Integrals. Areas. Differential Equations."
+            }
+        }
+    ];
+
+    let targetDate = null;
+
+    function initializeDashboard() {
+        const listContainer = document.getElementById('test-list-container');
+        listContainer.innerHTML = '';
+
+        const now = new Date();
+        let nextExam = null;
+
+        examData.forEach((exam, index) => {
+            const examDateTime = new Date(`${exam.dateStr}T${exam.timeStr}`);
+            
+            // Build Roadmap Cards
+            const card = document.createElement('div');
+            card.className = `test-card ${index === 0 ? 'active' : ''}`;
+            card.onclick = () => selectExam(index, card);
+            
+            card.innerHTML = `
+                <div class="card-header">
+                    <span>${exam.name}</span>
+                    <span class="card-date">${exam.dateStr}</span>
+                </div>
+                <div class="card-type">${exam.type}</div>
+            `;
+            listContainer.appendChild(card);
+
+            // Determine current active next upcoming target
+            if (!nextExam && examDateTime > now) {
+                nextExam = exam;
+            }
+        });
+
+        // Default to first card setup
+        if (examData.length > 0) {
+            viewSyllabus(0);
+        }
+
+        // Apply dynamic calculation hook for countdown engine
+        if (nextExam) {
+            document.getElementById('next-exam-title').innerText = nextExam.name + ` (${nextExam.type})`;
+            document.getElementById('next-exam-date').innerText = `Scheduled: ${nextExam.displayDate} at ${nextExam.timeStr}`;
+            targetDate = new Date(`${nextExam.dateStr}T${nextExam.timeStr}`).getTime();
+            startCountdown();
+        } else {
+            document.getElementById('next-exam-title').innerText = "All scheduled milestone tests completed!";
+        }
+    }
+
+    function selectExam(index, element) {
+        document.querySelectorAll('.test-card').forEach(c => c.classList.remove('active'));
+        element.classList.add('active');
+        viewSyllabus(index);
+    }
+
+    function viewSyllabus(index) {
+        const exam = examData[index];
+        const container = document.getElementById('syllabus-container');
+        
+        container.innerHTML = `
+            <h4 style="color: var(--accent-blue); font-size: 1.1rem; margin-bottom:10px;">${exam.name} Scope Areas</h4>
+            <h4>Physics</h4>
+            <div class="syllabus-text">${exam.syllabus.physics}</div>
+            <h4>Chemistry</h4>
+            <div class="syllabus-text">${exam.syllabus.chemistry}</div>
+            <h4>Mathematics</h4>
+            <div class="syllabus-text">${exam.syllabus.maths}</div>
+        `;
+    }
+
+    function startCountdown() {
+        function updateTimer() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                document.getElementById('days').innerText = "00";
+                document.getElementById('hours').innerText = "00";
+                document.getElementById('minutes').innerText = "00";
+                document.getElementById('seconds').innerText = "00";
+                return;
+            }
+
+            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').innerText = String(d).padStart(2, '0');
+            document.getElementById('hours').innerText = String(h).padStart(2, '0');
+            document.getElementById('minutes').innerText = String(m).padStart(2, '0');
+            document.getElementById('seconds').innerText = String(s).padStart(2, '0');
+        }
+        
+        updateTimer();
+        setInterval(updateTimer, 1000);
+    }
+
+    window.onload = initializeDashboard;
+</script>
+</body>
+</html>
