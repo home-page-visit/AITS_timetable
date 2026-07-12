@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MGE-AITS Dashboard</title>
+    <title>MGE-AITS Comprehensive Tracker</title>
     <style>
         :root {
             --bg-dark: #0f172a;
             --panel-bg: #1e293b;
             --accent-blue: #38bdf8;
             --accent-green: #4ade80;
+            --accent-orange: #fb923c;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
@@ -105,7 +106,7 @@
             text-transform: uppercase;
         }
 
-        /* Layout Split for portions and list */
+        /* Main Grid Split */
         .main-layout {
             display: grid;
             grid-template-columns: 1fr;
@@ -114,7 +115,7 @@
 
         @media (min-width: 768px) {
             .main-layout {
-                grid-template-columns: 1.2fr 0.8fr;
+                grid-template-columns: 1.1fr 0.9fr;
             }
         }
 
@@ -123,6 +124,7 @@
             border-radius: 12px;
             padding: 20px;
             border: 1px solid var(--border-color);
+            align-self: start;
         }
 
         .panel h3 {
@@ -132,12 +134,27 @@
             color: var(--accent-blue);
         }
 
+        .section-divider {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0 8px 0;
+            padding-left: 5px;
+            border-left: 2px solid var(--border-color);
+        }
+
+        .section-divider.history-label {
+            border-left-color: var(--accent-orange);
+            color: var(--accent-orange);
+        }
+
         /* Test Cards */
         .test-list {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            max-height: 550px;
+            max-height: 600px;
             overflow-y: auto;
             padding-right: 5px;
         }
@@ -156,6 +173,14 @@
             background: rgba(56, 189, 248, 0.05);
         }
 
+        .test-card.past-test {
+            border-left: 4px solid var(--accent-orange);
+        }
+        
+        .test-card.upcoming-test {
+            border-left: 4px solid var(--accent-green);
+        }
+
         .test-card .card-header {
             display: flex;
             justify-content: space-between;
@@ -165,8 +190,10 @@
 
         .test-card .card-date {
             font-size: 0.9rem;
-            color: var(--accent-green);
         }
+        
+        .past-test .card-date { color: var(--accent-orange); }
+        .upcoming-test .card-date { color: var(--accent-green); }
 
         .test-card .card-type {
             font-size: 0.85rem;
@@ -189,16 +216,20 @@
             font-size: 0.95rem;
             color: #e2e8f0;
             border-left: 3px solid var(--accent-blue);
+            margin-bottom: 10px;
         }
 
-        /* Custom Scrollbar for list */
-        .test-list::-webkit-scrollbar {
-            width: 6px;
-        }
-        .test-list::-webkit-scrollbar-thumb {
-            background-color: var(--border-color);
+        .badge {
+            font-size: 0.75rem;
+            padding: 2px 6px;
             border-radius: 4px;
+            font-weight: bold;
         }
+        .badge.history { background-color: rgba(251, 146, 60, 0.2); color: var(--accent-orange); }
+        .badge.upcoming { background-color: rgba(74, 222, 128, 0.2); color: var(--accent-green); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -206,13 +237,13 @@
 <div class="container">
     <header>
         <h1>MAHARISHI GLOBAL EDUCATION</h1>
-        <p>All India Test Series (MGE-AITS) for JEE 2027 Dashboard</p>
+        <p>All India Test Series (MGE-AITS) | JEE 2027 Portal</p>
     </header>
 
     <!-- LIVE COUNTDOWN WIDGET -->
     <div class="countdown-section">
         <h2>COUNTDOWN TO NEXT UPCOMING EXAM</h2>
-        <div id="next-exam-title" class="exam-name">Loading Next Exam Details...</div>
+        <div id="next-exam-title" class="exam-name">Checking test timelines...</div>
         <div id="next-exam-date" style="color: var(--text-muted); font-size: 0.95rem;"></div>
         <div class="timer-display">
             <div class="timer-box"><span class="num" id="days">00</span><span class="label">Days</span></div>
@@ -225,19 +256,19 @@
     <!-- MAIN TRACKING CONSOLE -->
     <div class="main-layout">
         
-        <!-- RIGHT PANEL FLIPPED TO LEFT FOR PORTION VIEWING -->
+        <!-- SYLLABUS PORTIONS FOCUS -->
         <div class="panel">
-            <h3>Syllabus / Portions Window</h3>
+            <h3>Syllabus Portions Window</h3>
             <div id="syllabus-container">
-                <p style="color: var(--text-muted);">Select any test card on the side panel to dynamically review its comprehensive syllabus portions here.</p>
+                <p style="color: var(--text-muted);">Select any test card from the roadmap panel to view its full syllabus portions breakdown here.</p>
             </div>
         </div>
 
-        <!-- LIST PANEL -->
+        <!-- ROADMAP TIMELINE WITH HISTORICAL TRACKING -->
         <div class="panel">
             <h3>Test Series Roadmap</h3>
             <div class="test-list" id="test-list-container">
-                <!-- Cards injected programmatically from schedule database -->
+                <!-- Sorted upcoming and history items will build dynamically here -->
             </div>
         </div>
 
@@ -245,8 +276,20 @@
 </div>
 
 <script>
-    // Embedded Database constructed accurately from schedule documentation
+    // Embedded Database loaded with full data records
     const examData = [
+        {
+            name: "Preparatory Test 1",
+            dateStr: "2026-07-05",
+            timeStr: "09:00:00",
+            displayDate: "July 5, 2026 (Sunday)",
+            type: "JEE Main & Advanced",
+            syllabus: {
+                physics: "Kinematics. Laws of Motion. Work, Energy and Power. Conservation of Momentum. Rotational Motion, Gravitation. Properties of Solids. Properties of Fluids. Heat. Thermodynamics. Kinetic Theory of Gases. Oscillations. Waves. Electrostatics.",
+                chemistry: "Some Basic Concepts in Chemistry. Redox Reactions. Atomic Structure. Chemical Bonding and Molecular Structure. Chemical Thermodynamics. Equilibrium, Chemical Kinetics. Classification of Elements and Periodicity. Purification/Characterisation of Organic Compounds. Basic Principles of Organic Chemistry. Hydrocarbons. Organic Compounds Containing Halogens. Alcohols, Phenols and Ethers.",
+                maths: "Sets and Relations. Functions. Quadratic Equations and Expressions. Complex Numbers. Permutations and Combinations. Binomial Theorem. Sequence and Series. Statistics. Straight Line. Circle. Conic Sections. Trigonometric Ratios and Identities. Inverse Trigonometric Functions. Parabola, Ellipse and Hyperbola."
+            }
+        },
         {
             name: "Preparatory Test 2",
             dateStr: "2026-08-02",
@@ -254,9 +297,9 @@
             displayDate: "August 2, 2026 (Sunday)",
             type: "JEE Main & Advanced",
             syllabus: {
-                physics: "Preparatory Test 1 syllabus (approx 70% weightage). Current Electricity.",
-                chemistry: "Preparatory Test 1 syllabus (approx 70% weightage). Aldehydes and Ketones. Carboxylic Acids. Organic Compounds Containing Nitrogen. Biomolecules. Polymers.",
-                maths: "Preparatory Test 1 syllabus (approx 70% weightage). Limits, Continuity and Differentiability. Differentiation. Applications of Derivatives."
+                physics: "Preparatory Test 1 syllabus (approximately 70% weightage). Current Electricity.",
+                chemistry: "Preparatory Test 1 syllabus (approximately 70% weightage). Aldehydes and Ketones. Carboxylic Acids. Organic Compounds Containing Nitrogen. Biomolecules. Polymers.",
+                maths: "Preparatory Test 1 syllabus (approximately 70% weightage). Limits, Continuity and Differentiability. Differentiation. Applications of Derivatives."
             }
         },
         {
@@ -266,9 +309,9 @@
             displayDate: "August 30, 2026 (Sunday)",
             type: "JEE Main & Advanced",
             syllabus: {
-                physics: "Preparatory Test 2 syllabus (approx 75% weightage). Magnetic Effects of Current and Magnetism. Electromagnetic Induction and Alternating Current.",
-                chemistry: "Preparatory Test 2 syllabus (approx 75% weightage). Solutions. Electrochemistry. p-Block Elements.",
-                maths: "Preparatory Test 2 syllabus (approx 75% weightage). Indefinite Integrals. Definite Integrals. Areas."
+                physics: "Preparatory Test 2 syllabus (approximately 75% weightage). Magnetic Effects of Current and Magnetism. Electromagnetic Induction and Alternating Current.",
+                chemistry: "Preparatory Test 2 syllabus (approximately 75% weightage). Solutions. Electrochemistry. p-Block Elements.",
+                maths: "Preparatory Test 2 syllabus (approximately 75% weightage). Indefinite Integrals. Definite Integrals. Areas."
             }
         },
         {
@@ -278,9 +321,9 @@
             displayDate: "October 4, 2026 (Sunday)",
             type: "JEE Main & Advanced",
             syllabus: {
-                physics: "Preparatory Test 3 syllabus (approx 80% weightage). Electromagnetic Waves. Ray Optics.",
-                chemistry: "Preparatory Test 3 syllabus (approx 80% weightage). Isolation of Metals. d- and f-Block Elements. Coordination Compounds.",
-                maths: "Preparatory Test 3 syllabus (approx 80% weightage). Differential Equations. Probability. Matrices and Determinants."
+                physics: "Preparatory Test 3 syllabus (approximately 80% weightage). Electromagnetic Waves. Ray Optics.",
+                chemistry: "Preparatory Test 3 syllabus (approximately 80% weightage). Isolation of Metals. d- and f-Block Elements. Coordination Compounds.",
+                maths: "Preparatory Test 3 syllabus (approximately 80% weightage). Differential Equations. Probability. Matrices and Determinants."
             }
         },
         {
@@ -290,21 +333,9 @@
             displayDate: "November 1, 2026 (Sunday)",
             type: "JEE Main & Advanced",
             syllabus: {
-                physics: "Preparatory Test 4 syllabus (approx 85% weightage). Wave Optics. Dual Nature of Matter/Radiation. Atoms & Nuclei. Electronic Devices. Units & Measurements. Experimental Skills.",
-                chemistry: "Preparatory Test 4 syllabus (approx 85% weightage). Solid State. Surface Chemistry. Principles of Qualitative Analysis. Chemistry in Everyday Life. Environmental Chemistry. Principles Related to Practical Chemistry.",
-                maths: "Preparatory Test 4 syllabus (approx 85% weightage). Vector Algebra. Three-Dimensional Geometry."
-            }
-        },
-        {
-            name: "Part Test 1",
-            dateStr: "2026-11-14",
-            timeStr: "09:00:00",
-            displayDate: "November 14, 2026 (Saturday)",
-            type: "JEE Main & Advanced P1/P2",
-            syllabus: {
-                physics: "Kinematics. Laws of Motion. Work, Energy and Power. Conservation of Momentum. Rotational Motion.",
-                chemistry: "Some Basic Concepts. Redox Reactions. Atomic Structure. Chemical Bonding & Molecular Structure. Equilibrium. Chemical Kinetics. Classification of Elements & Periodicity. Hydrogen. s-Block Elements.",
-                maths: "Sets and Relations. Functions. Limits Continuity and Differentiability. Differentiation. Applications of Derivatives. Indefinite & Definite Integrals. Areas. Differential Equations."
+                physics: "Preparatory Test 4 syllabus (approximately 85% weightage). Wave Optics. Dual Nature of Matter and Radiation. Atoms and Nuclei. Electronic Devices. Units and Measurements. Experimental Skills.",
+                chemistry: "Preparatory Test 4 syllabus (approximately 85% weightage). Solid State. Surface Chemistry. Principles of Qualitative Analysis. Chemistry in Everyday Life. Environmental Chemistry. Principles Related to Practical Chemistry.",
+                maths: "Preparatory Test 4 syllabus (approximately 85% weightage). Vector Algebra. Three-Dimensional Geometry."
             }
         }
     ];
@@ -316,45 +347,85 @@
         listContainer.innerHTML = '';
 
         const now = new Date();
-        let nextExam = null;
+        
+        // Split data systematically into active/history sets
+        const upcomingExams = [];
+        const historyExams = [];
 
-        examData.forEach((exam, index) => {
+        examData.forEach((exam) => {
             const examDateTime = new Date(`${exam.dateStr}T${exam.timeStr}`);
-            
-            // Build Roadmap Cards
-            const card = document.createElement('div');
-            card.className = `test-card ${index === 0 ? 'active' : ''}`;
-            card.onclick = () => selectExam(index, card);
-            
-            card.innerHTML = `
-                <div class="card-header">
-                    <span>${exam.name}</span>
-                    <span class="card-date">${exam.dateStr}</span>
-                </div>
-                <div class="card-type">${exam.type}</div>
-            `;
-            listContainer.appendChild(card);
-
-            // Determine current active next upcoming target
-            if (!nextExam && examDateTime > now) {
-                nextExam = exam;
+            if (examDateTime > now) {
+                upcomingExams.push(exam);
+            } else {
+                historyExams.push(exam);
             }
         });
 
-        // Default to first card setup
+        let absoluteIndex = 0;
+
+        // 1. Render Upcoming Schedule First
+        if (upcomingExams.length > 0) {
+            const div = document.createElement('div');
+            div.className = 'section-divider';
+            div.innerText = 'Upcoming Schedule';
+            listContainer.appendChild(div);
+
+            upcomingExams.forEach((exam) => {
+                createCard(exam, absoluteIndex++, true, listContainer);
+            });
+        }
+
+        // 2. Render History/Completed Trackers
+        if (historyExams.length > 0) {
+            const div = document.createElement('div');
+            div.className = 'section-divider history-label';
+            div.innerText = 'Exam History';
+            listContainer.appendChild(div);
+
+            historyExams.forEach((exam) => {
+                createCard(exam, absoluteIndex++, false, listContainer);
+            });
+        }
+
+        // Initialize First Card View
         if (examData.length > 0) {
+            const firstCard = document.querySelector('.test-card');
+            if (firstCard) firstCard.classList.add('active');
             viewSyllabus(0);
         }
 
-        // Apply dynamic calculation hook for countdown engine
-        if (nextExam) {
+        // Dynamically initialize current upcoming timer parameters
+        if (upcomingExams.length > 0) {
+            const nextExam = upcomingExams[0]; 
             document.getElementById('next-exam-title').innerText = nextExam.name + ` (${nextExam.type})`;
             document.getElementById('next-exam-date').innerText = `Scheduled: ${nextExam.displayDate} at ${nextExam.timeStr}`;
             targetDate = new Date(`${nextExam.dateStr}T${nextExam.timeStr}`).getTime();
             startCountdown();
         } else {
             document.getElementById('next-exam-title').innerText = "All scheduled milestone tests completed!";
+            document.getElementById('next-exam-date').innerText = "Review all historical test portions in the roadmap panel below.";
         }
+    }
+
+    function createCard(exam, index, isUpcoming, container) {
+        const card = document.createElement('div');
+        card.className = `test-card ${isUpcoming ? 'upcoming-test' : 'past-test'}`;
+        card.setAttribute('data-index', index);
+        card.onclick = () => selectExam(index, card);
+        
+        const statusBadge = isUpcoming ? '<span class="badge upcoming">ACTIVE</span>' : '<span class="badge history">COMPLETED</span>';
+
+        card.innerHTML = `
+            <div class="card-header">
+                <span>${exam.name}</span>
+                <span class="card-date">${exam.dateStr}</span>
+            </div>
+            <div class="card-type" style="display:flex; justify-content:space-between; align-items:center;">
+                <span>${exam.type}</span>
+                ${statusBadge}
+            </div>
+        `;
+        container.appendChild(card);
     }
 
     function selectExam(index, element) {
@@ -368,7 +439,7 @@
         const container = document.getElementById('syllabus-container');
         
         container.innerHTML = `
-            <h4 style="color: var(--accent-blue); font-size: 1.1rem; margin-bottom:10px;">${exam.name} Scope Areas</h4>
+            <h4 style="color: var(--accent-blue); font-size: 1.1rem; margin-bottom:10px;">${exam.name} Portions Scope</h4>
             <h4>Physics</h4>
             <div class="syllabus-text">${exam.syllabus.physics}</div>
             <h4>Chemistry</h4>
